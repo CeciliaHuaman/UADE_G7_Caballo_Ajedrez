@@ -135,7 +135,6 @@ class AbstractAlgorithm(abc.ABC):
         """This function runs the algorithm until the user presses the 'r' key"""
         while True:
             self._run()
-            pause = True
             if check_events():
                 self._reset()
 
@@ -163,41 +162,42 @@ class AbstractAlgorithm(abc.ABC):
         raise NotImplementedError
 
 
-class RandomAlgorithm(AbstractAlgorithm):
+# class RandomAlgorithm(AbstractAlgorithm):
 
-    def __init__(self, piece: Piece=Piece()) -> None:
-        self._piece = piece
-        self._board = Board(parent=WIN, piece=self._piece)
+#     def __init__(self, piece: Piece=Piece()) -> None:
+#         self._piece = piece
+#         self._board = Board(parent=WIN, piece=self._piece)
 
-    def _run(self) -> None:
-        """This method moves the piece to a random position on the board"""
-        while True:
-            position = self._get_random_position()
-            self._move_piece(position)
-            # Only useful for the RandomAlgorithm
-            if check_events():
-                self._reset()
+#     def _run(self) -> None:
+#         """This method moves the piece to a random position on the board"""
+#         while True:
+#             position = self._get_random_position()
+#             self._move_piece(position)
+#             # Only useful for the RandomAlgorithm
+#             if check_events():
+#                 self._reset()
 
-    def _get_random_position(self) -> BoardPosition:
-        """Generates a random position for the piece on the board
+#     def _get_random_position(self) -> BoardPosition:
+#         """Generates a random position for the piece on the board
 
-        Returns:
-            BoardPosition: A tuple representing the position on the board
-        """
-        position = (randint(0, 7), randint(0, 7))
-        return position
+#         Returns:
+#             BoardPosition: A tuple representing the position on the board
+#         """
+#         position = (randint(0, 7), randint(0, 7))
+#         return position
 
 
-class BacktrackingAlgorithm(AbstractAlgorithm):
+class movementAlgorithm(AbstractAlgorithm):
     
-    def __init__(self, piece: Piece=Piece()) -> None:
+    def __init__(self, piece: Piece=Piece(), movements: list[BoardPosition]=list()) -> None:
         self._piece = piece
         self._board = Board(parent=WIN, piece=self._piece)
+        self._movements = movements
 
     def _run(self) -> None:
         # Add your code here, call self._move_piece to move the piece
-        position = (0, 0)
-        self._move_piece(position)
+        for position in self._movements:
+            self._move_piece(position)
 
 
 class Game:
@@ -208,8 +208,3 @@ class Game:
         pygame.init()
         self._algorithm.run()
         pygame.quit()
-
-
-if __name__ == "__main__":
-    game = Game(algorithm=RandomAlgorithm())
-    game.run()

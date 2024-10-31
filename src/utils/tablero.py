@@ -12,9 +12,9 @@ SQ_SIZE = 90
 class Board:
 
     def __init__(
-        self, parent: pygame.Surface, piece: Piece, with_legend: bool = False
+        self, size, parent: pygame.Surface, piece: Piece, with_legend: bool = False
     ) -> None:
-        self._board = [[0 for _ in range(8)] for _ in range(8)]
+        self._board = [[0 for _ in range(size)] for _ in range(size)]
         self._parent = parent
         self._with_legend = with_legend
         self.surface
@@ -161,44 +161,20 @@ class AbstractAlgorithm(abc.ABC):
         """
         raise NotImplementedError
 
-
-# class RandomAlgorithm(AbstractAlgorithm):
-
-#     def __init__(self, piece: Piece=Piece()) -> None:
-#         self._piece = piece
-#         self._board = Board(parent=WIN, piece=self._piece)
-
-#     def _run(self) -> None:
-#         """This method moves the piece to a random position on the board"""
-#         while True:
-#             position = self._get_random_position()
-#             self._move_piece(position)
-#             # Only useful for the RandomAlgorithm
-#             if check_events():
-#                 self._reset()
-
-#     def _get_random_position(self) -> BoardPosition:
-#         """Generates a random position for the piece on the board
-
-#         Returns:
-#             BoardPosition: A tuple representing the position on the board
-#         """
-#         position = (randint(0, 7), randint(0, 7))
-#         return position
-
-
 class movementAlgorithm(AbstractAlgorithm):
     
-    def __init__(self, piece: Piece=Piece(), movements: list[BoardPosition]=list()) -> None:
+    def __init__(self, size,  piece: Piece=Piece(), movements: list[BoardPosition]=list()) -> None:
         self._piece = piece
-        self._board = Board(parent=WIN, piece=self._piece)
+        self._board = Board(size, parent=WIN, piece=self._piece)
         self._movements = movements
 
     def _run(self) -> None:
         # Add your code here, call self._move_piece to move the piece
         for position in self._movements:
             self._move_piece(position)
-
+        global pause
+        while pause:
+            check_events()
 
 class Game:
     def __init__(self, algorithm: AbstractAlgorithm) -> None:

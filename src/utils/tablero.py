@@ -2,6 +2,112 @@ from __future__ import annotations
 import pygame
 from random import randint
 import abc
+import time
+
+
+
+# Python3 program to solve Knight Tour problem using Branch and Bound with Warnsdorff’s heuristic
+
+# Chessboard Size
+n = 8
+
+def isSafe(x, y, board):
+    '''
+        A utility function to check if (x, y) are valid indexes 
+        for n*n chessboard
+    '''
+    if 0 <= x < n and 0 <= y < n and board[x][y] == -1:
+        return True
+    return False
+
+def printSolution(n, board):
+    '''
+        A utility function to print Chessboard matrix
+    '''
+    for i in range(n):
+        for j in range(n):
+            print(board[i][j], end=' ')
+        print()
+
+def countNextMoves(x, y, board, move_x, move_y):
+    '''
+        Count the number of possible moves from position (x, y).
+    '''
+    count = 0
+    for i in range(8):
+        new_x, new_y = x + move_x[i], y + move_y[i]
+        if isSafe(new_x, new_y, board):
+            count += 1
+    return count
+
+def getNextMove(x, y, board, move_x, move_y, bkalg: BacktrackingAlgorithm):
+    '''
+        Get the next move with the fewest onward moves, following Warnsdorff's rule.
+    '''
+    min_degree = 8          # El valor máximo de movimientos es 8
+    next_move = (-1, -1)    # Inicializamos next_move como un movimiento no válido
+    
+    for i in range(8):       # Iteramos sobre los 8 posibles movimientos del caballo
+        new_x, new_y = x + move_x[i], y + move_y[i]  # Calculamos las coordenadas del movimiento candidato
+        
+        if isSafe(new_x, new_y, board):  # Verificamos si el movimiento es seguro (dentro del tablero y no visitado)
+            degree = countNextMoves(new_x, new_y, board, move_x, move_y)  # Contamos las opciones futuras desde (new_x, new_y)
+            
+            if degree < min_degree:   # Si el número de opciones es menor que el mínimo actual
+                min_degree = degree   # Actualizamos min_degree
+                next_move = (new_x, new_y)  # Guardamos el mejor movimiento como próximo movimiento
+    
+    return next_move   # Retornamos el movimiento óptimo
+
+def solveKT(n, x_position, y_position, bkalg: BacktrackingAlgorithm):
+    '''
+        This function solves the Knight Tour problem using Branch and Bound with 
+        Warnsdorff’s heuristic. It returns false if no complete tour is possible,
+        otherwise returns true and prints the tour.
+    '''
+
+    # Initialization of Board matrix
+    board = [[-1 for i in range(n)] for j in range(n)]
+
+    # All possible moves for Knight
+    move_x = [2, 1, -1, -2, -2, -1, 1, 2]
+    move_y = [1, 2, 2, 1, -1, -2, -2, -1]
+
+    # Start Knight's Tour from the first block
+    board[x_position][y_position] = 0
+    bkalg._move_piece((x_position, y_position))
+    pos = 1
+
+    # Start the tour using Branch and Bound
+    if not solveKTUtil(n, board, x_position, y_position, move_x, move_y, pos, bkalg):
+        print("Solution does not exist")
+    else:
+        printSolution(n, board)
+
+def solveKTUtil(n, board, curr_x, curr_y, move_x, move_y, pos, bkalg: BacktrackingAlgorithm):
+    '''
+        A recursive utility function to solve Knight Tour problem using 
+        Branch and Bound with Warnsdorff's heuristic.
+    '''
+
+    if pos == n**2:
+        return True
+
+    # Get the next move with the fewest onward moves
+    for i in range(8):
+        next_x, next_y = getNextMove(curr_x, curr_y, board, move_x, move_y, bkalg)
+        if next_x != -1 and next_y != -1:
+            board[next_x][next_y] = pos
+            bkalg._move_piece((next_x, next_y))
+            time.sleep(2)
+            if solveKTUtil(n, board, next_x, next_y, move_x, move_y, pos + 1, bkalg):
+                return True
+            # Backtracking
+            board[next_x][next_y] = -1
+    return False
+
+
+
 
 BoardPosition = tuple[int, int]
 
@@ -188,17 +294,18 @@ class RandomAlgorithm(AbstractAlgorithm):
         return position
 
 
+
 class BacktrackingAlgorithm(AbstractAlgorithm):
     
     def __init__(self, piece: Piece=Piece()) -> None:
         self._piece = piece
         self._board = Board(parent=WIN, piece=self._piece)
+        
+        solveKT(8, 2, 4, self)
 
     def _run(self) -> None:
-        # Add your code here, call self._move_piece to move the piece
-        position = (0, 0)
-        self._move_piece(position)
-
+        if check_events():
+            self._reset()
 
 class Game:
     def __init__(self, algorithm: AbstractAlgorithm) -> None:
@@ -211,5 +318,5 @@ class Game:
 
 
 if __name__ == "__main__":
-    game = Game(algorithm=RandomAlgorithm())
+    game = Game(algorithm=BacktrackingAlgorithm())
     game.run()

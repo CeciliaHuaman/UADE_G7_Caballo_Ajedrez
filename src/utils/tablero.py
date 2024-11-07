@@ -291,11 +291,3 @@ class Game:
 
     def run(self) -> None:
         self._algorithm.run()
-
-
-if __name__ == "__main__":
-    x = int(input(f"Ingrese la position en X (entre 0 y {size-1}): "))
-    y = int(input(f"Ingrese la position en Y (entre 0 y {size-1}): "))
-    piece = Piece(start_pos=(x,y))
-    game = Game(algorithm=BacktrackingAlgorithm(piece=piece))
-    game.run()

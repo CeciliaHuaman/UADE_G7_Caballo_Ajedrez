@@ -1,4 +1,6 @@
-from src.utils.tablero import Piece,Game,BacktrackingAlgorithm
+from src.utils.game import Game
+from src.utils.tablero import Piece
+from src.backtracking import BacktrackingAlgorithm
 from pathlib import Path
 
 if __name__ == "__main__":

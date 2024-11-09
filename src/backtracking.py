@@ -5,63 +5,30 @@ from src.utils.tablero import Board, BoardPosition, Piece, SQ_SIZE
 
 def isSafe(x, y, board, size):
     '''
-        A utility function to check if (x, y) are valid indexes 
-        for n*n chessboard
+        A utility function to check if i,j are valid indexes 
+        for N*N chessboard
     '''
     if 0 <= x < size and 0 <= y < size and board[x][y] == -1:
         return True
     return False
 
-def printSolution(n, board):
+def solveKT(n, bkalg: AbstractAlgorithm):
     '''
-        A utility function to print Chessboard matrix
-    '''
-    for i in range(n):
-        for j in range(n):
-            print(board[i][j], end=' ')
-        print()
-
-def countNextMoves(x, y, board, move_x, move_y, size):
-    '''
-        Count the number of possible moves from position (x, y).
-    '''
-    count = 0
-    for i in range(8):
-        new_x, new_y = x + move_x[i], y + move_y[i]
-        if isSafe(new_x, new_y, board, size):
-            count += 1
-    return count
-
-def getNextMove(x, y, board, move_x, move_y, bkalg: BacktrackingAlgorithm):
-    '''
-        Get the next move with the fewest onward moves, following Warnsdorff's rule.
-    '''
-    min_degree = 8          # El valor máximo de movimientos es 8
-    next_move = (-1, -1)    # Inicializamos next_move como un movimiento no válido
-    
-    for i in range(8):       # Iteramos sobre los 8 posibles movimientos del caballo
-        new_x, new_y = x + move_x[i], y + move_y[i]  # Calculamos las coordenadas del movimiento candidato
-        
-        if isSafe(new_x, new_y, board, len(bkalg._board.matrix)):  # Verificamos si el movimiento es seguro (dentro del tablero y no visitado)
-            degree = countNextMoves(new_x, new_y, board, move_x, move_y, len(bkalg._board.matrix))  # Contamos las opciones futuras desde (new_x, new_y)
-            
-            if degree < min_degree:   # Si el número de opciones es menor que el mínimo actual
-                min_degree = degree   # Actualizamos min_degree
-                next_move = (new_x, new_y)  # Guardamos el mejor movimiento como próximo movimiento
-    
-    return next_move   # Retornamos el movimiento óptimo
-
-def solveKT(n, bkalg: BacktrackingAlgorithm):
-    '''
-        This function solves the Knight Tour problem using Branch and Bound with 
-        Warnsdorff’s heuristic. It returns false if no complete tour is possible,
-        otherwise returns true and prints the tour.
+        This function solves the Knight Tour problem using 
+        Backtracking. This function mainly uses solveKTUtil() 
+        to solve the problem. It returns false if no complete 
+        tour is possible, otherwise return true and prints the 
+        tour. 
+        Please note that there may be more than one solutions, 
+        this function prints one of the feasible solutions.
     '''
 
     # Initialization of Board matrix
-    board = [[-1 for i in range(n)] for j in range(n)]
+    board = [[-1 for i in range(n)]for i in range(n)]
 
-    # All possible moves for Knight
+    # move_x and move_y define next move of Knight.
+    # move_x is for next value of x coordinate
+    # move_y is for next value of y coordinate
     move_x = [2, 1, -1, -2, -2, -1, 1, 2]
     move_y = [1, 2, 2, 1, -1, -2, -2, -1]
 
@@ -71,35 +38,34 @@ def solveKT(n, bkalg: BacktrackingAlgorithm):
     bkalg.move_piece((y_position, x_position), pos=board[x_position][y_position])
     pos = 1
 
-    # Start the tour using Branch and Bound
+    # Checking if solution exists or not
     if not solveKTUtil(n, board, x_position, y_position, move_x, move_y, pos, bkalg):
         print("Solution does not exist")
-    else:
-        printSolution(n, board)
 
-def solveKTUtil(n, board, curr_x, curr_y, move_x, move_y, pos, bkalg: BacktrackingAlgorithm):
+def solveKTUtil(n, board, curr_x, curr_y, move_x, move_y, pos, bkalg: AbstractAlgorithm):
     '''
         A recursive utility function to solve Knight Tour problem using 
         Branch and Bound with Warnsdorff's heuristic.
     '''
     bkalg.check_events()
     
-    if pos == n**2:
+    if(pos == n**2):
         return True
 
-    # Get the next move with the fewest onward moves
-    for _ in range(8):
-        next_x, next_y = getNextMove(curr_x, curr_y, board, move_x, move_y, bkalg)
-        if next_x != -1 and next_y != -1:
-            board[next_x][next_y] = pos
-            bkalg.move_piece((next_y, next_x), pos=board[next_x][next_y])
-            if solveKTUtil(n, board, next_x, next_y, move_x, move_y, pos + 1, bkalg):
+    # Try all next moves from the current coordinate x, y
+    for i in range(8):
+        new_x = curr_x + move_x[i]
+        new_y = curr_y + move_y[i]
+        if(isSafe(new_x, new_y, board,len(bkalg._board.matrix))):
+            board[new_x][new_y] = pos
+            bkalg.move_piece((new_y, new_x), pos=board[new_x][new_y])
+            if(solveKTUtil(n, board, new_x, new_y, move_x, move_y, pos+1,bkalg)):
                 return True
-            # Backtracking
-            board[next_x][next_y] = -1
-            bkalg.move_piece((next_y, next_x), pos=board[next_x][next_y])
-    return False
 
+            # Backtracking
+            board[new_x][new_y] = -1
+            bkalg.move_piece((new_y, new_x), pos=board[new_x][new_y])
+    return False
 
 class AbstractAlgorithm(abc.ABC):
     _board: Board

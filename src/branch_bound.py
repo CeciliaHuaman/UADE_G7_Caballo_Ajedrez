@@ -1,6 +1,6 @@
 from __future__ import annotations
 import pygame
-from src.backtracking import AbstractAlgorithm, isSafe
+from src.backtracking import AbstractAlgorithm, isSafe, printSolution
 from src.utils.tablero import Board, BoardPosition, Piece, SQ_SIZE
 
 
@@ -58,6 +58,8 @@ def solveKT(n, bkalg: AbstractAlgorithm):
     # Start the tour using Branch and Bound
     if not solveKTUtil(n, board, x_position, y_position, move_x, move_y, pos, bkalg):
         print("Solution does not exist")
+    else:
+        printSolution(n,board)
 
 
 def solveKTUtil(n, board, curr_x, curr_y, move_x, move_y, pos, bkalg: AbstractAlgorithm):

@@ -12,6 +12,15 @@ def isSafe(x, y, board, size):
         return True
     return False
 
+def printSolution(n, board):
+    '''
+        A utility function to print Chessboard matrix
+    '''
+    for i in range(n):
+        for j in range(n):
+            print(board[i][j], end=' ')
+        print()
+
 def solveKT(n, bkalg: AbstractAlgorithm):
     '''
         This function solves the Knight Tour problem using 
@@ -41,6 +50,8 @@ def solveKT(n, bkalg: AbstractAlgorithm):
     # Checking if solution exists or not
     if not solveKTUtil(n, board, x_position, y_position, move_x, move_y, pos, bkalg):
         print("Solution does not exist")
+    else:
+        printSolution(n,board)
 
 def solveKTUtil(n, board, curr_x, curr_y, move_x, move_y, pos, bkalg: AbstractAlgorithm):
     '''

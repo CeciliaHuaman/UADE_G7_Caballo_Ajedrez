@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "uade-g3-caballo-ajedrez"
 version = "0.1.0"
-description = ""
+description = "Chess backtraking TPO"
 authors = ["Cecilia Huaman <chuaman@uade.edu.ar>"]
 readme = "README.md"
 packages = [{include = "src"}]
@@ -9,6 +9,7 @@ packages = [{include = "src"}]
 [tool.poetry.dependencies]
 python = "^3.10"
 pygame = "^2.6.1"
+pygame-textinput = "^1.0.1"
 
 
 [build-system]

@@ -1,27 +1,25 @@
-from __future__ import annotations
-import pygame
-import abc
-from src.utils.tablero import Board, BoardPosition, Piece, SQ_SIZE
+from __future__ import annotations  # Ensures compatibility with type hints for future versions of Python
+import pygame  # Imports Pygame for graphical interface and event handling
+import time  # Imports time for measuring execution time
+import abc  # Imports abc for defining abstract base classes
+from src.utils.tablero import Board, BoardPosition, Piece, SQ_SIZE  # Imports required classes and constants
 
-def isSafe(x, y, board, size):
+def isSafe(x: int, y: int, board: list[list[int]], size: int) -> bool:
     '''
-        A utility function to check if i,j are valid indexes 
-        for N*N chessboard
+    A utility function to check if (x, y) are valid indexes for an N*N chessboard.
     '''
-    if 0 <= x < size and 0 <= y < size and board[x][y] == -1:
-        return True
-    return False
+    return 0 <= x < size and 0 <= y < size and board[x][y] == -1  # Checks bounds and if cell is unvisited
 
-def printSolution(n, board):
+def printSolution(n: int, board: list[list[int]]) -> None:
     '''
-        A utility function to print Chessboard matrix
+    A utility function to print the chessboard matrix solution.
     '''
     for i in range(n):
         for j in range(n):
-            print(board[i][j], end=' ')
+            print(board[i][j], end=' ')  # Prints each cell value
         print()
 
-def solveKT(n, bkalg: AbstractAlgorithm):
+def solveKT(n: int, bkalg: BacktrackingAlgorithm) -> None:
     '''
         This function solves the Knight Tour problem using 
         Backtracking. This function mainly uses solveKTUtil() 
@@ -31,51 +29,55 @@ def solveKT(n, bkalg: AbstractAlgorithm):
         Please note that there may be more than one solutions, 
         this function prints one of the feasible solutions.
     '''
+    start_time = time.time()  # Records the start time
 
-    # Initialization of Board matrix
-    board = [[-1 for i in range(n)]for i in range(n)]
+    board = [[-1 for _ in range(n)] for _ in range(n)]  # Initializes the board with -1 (unvisited)
+    move_x = [2, 1, -1, -2, -2, -1, 1, 2]  # Potential knight moves in x-direction
+    move_y = [1, 2, 2, 1, -1, -2, -2, -1]  # Potential knight moves in y-direction
 
-    # move_x and move_y define next move of Knight.
-    # move_x is for next value of x coordinate
-    # move_y is for next value of y coordinate
-    move_x = [2, 1, -1, -2, -2, -1, 1, 2]
-    move_y = [1, 2, 2, 1, -1, -2, -2, -1]
+    x_position, y_position = bkalg._piece.position  # Gets the starting position of the knight
+    board[x_position][y_position] = 0  # Marks the starting position as visited
 
-    # Start Knight's Tour from the first block
-    x_position, y_position = bkalg._piece.position
-    board[x_position][y_position] = 0
-    bkalg.move_piece((y_position, x_position), pos=board[x_position][y_position])
-    pos = 1
+    bkalg.path.append((x_position, y_position))  # Adds starting position to the path
+    pos = 1  # Initializes the move count
 
-    # Checking if solution exists or not
     if not solveKTUtil(n, board, x_position, y_position, move_x, move_y, pos, bkalg):
-        print("Solution does not exist")
+        print("Solution does not exist")  # Prints message if no solution is found
+        raise SystemExit
     else:
-        printSolution(n,board)
+        printSolution(n, board)  # Prints the solution
+        
+        print(f"--- {time.time() - start_time} seconds ---")  # Displays the execution time
 
-def solveKTUtil(n, board, curr_x, curr_y, move_x, move_y, pos, bkalg: AbstractAlgorithm):
+        # Starts Pygame display of the solution path
+        for pos, step in enumerate(bkalg.path):
+            bkalg.check_events()  # Checks for any Pygame events
+            bkalg.move_piece(position=step, pos=pos)  # Moves the piece to the next step in the solution
+
+def solveKTUtil(n: int, board: list[list[int]], curr_x: int, curr_y: int, move_x: list[int], move_y: list[int], pos: int, bkalg: BacktrackingAlgorithm) -> bool:
     '''
         A recursive utility function to solve Knight Tour problem using 
         Branch and Bound with Warnsdorff's heuristic.
     '''
-    bkalg.check_events()
-    
-    if(pos == n**2):
+    if pos == n**2:  # If all squares are visited, the tour is complete
         return True
 
-    # Try all next moves from the current coordinate x, y
+    # Tries all possible moves for the knight from the current position
     for i in range(8):
         new_x = curr_x + move_x[i]
         new_y = curr_y + move_y[i]
-        if(isSafe(new_x, new_y, board,len(bkalg._board.matrix))):
-            board[new_x][new_y] = pos
-            bkalg.move_piece((new_y, new_x), pos=board[new_x][new_y])
-            if(solveKTUtil(n, board, new_x, new_y, move_x, move_y, pos+1,bkalg)):
+        
+        if isSafe(new_x, new_y, board, n):  # Checks if the move is valid
+            board[new_x][new_y] = pos  # Marks the cell as visited
+            bkalg.path.append((new_x, new_y))  # Adds move to path
+
+            if solveKTUtil(n, board, new_x, new_y, move_x, move_y, pos + 1, bkalg):  # Recursive call for next move
                 return True
 
-            # Backtracking
-            board[new_x][new_y] = -1
-            bkalg.move_piece((new_y, new_x), pos=board[new_x][new_y])
+            # Backtracks if no solution is found
+            board[new_x][new_y] = -1  # Unmarks the cell
+            bkalg.path.pop()  # Removes the move from the path
+
     return False
 
 class AbstractAlgorithm(abc.ABC):
@@ -86,7 +88,7 @@ class AbstractAlgorithm(abc.ABC):
     loop: bool = True
 
     def run(self) -> None:
-        """This function runs the algorithm until the user presses the 'r' key"""
+        """Runs the algorithm continuously until the user presses 'r' to reset."""
         while True:
             if self.loop:
                 self._run()
@@ -94,32 +96,28 @@ class AbstractAlgorithm(abc.ABC):
                 self._reset()
 
     def move_piece(self, position: BoardPosition, pos: int) -> None:
-        """Use this method to move the piece on the board
+        """Moves the piece to the specified position on the board and updates the display.
 
         Args:
-            position (BoardPosition): The position on the board where the piece needs to be moved to
+            position (BoardPosition): New position of the piece on the board.
         """
-        self._board.piece.move(position)
-        self._board.update(pos=pos)
-        pygame.time.wait(400)
-        
+        self._board.piece.move(position)  # Updates the piece's position
+        self._board.update(pos=pos)  # Updates the board display
+        pygame.time.wait(400)  # Adds delay for visualization
+
     def _reset(self) -> None:
-        """Resets the board and the piece to their initial state"""
-        self._piece.reset_position()
-        self._board = Board(parent=self._win, piece=self._piece, size=self._board._size, with_legend=True)
-        self._run()
+        """Resets the board and the piece to their initial state."""
+        self._piece.reset_position()  # Resets piece to starting position
+        self._board = Board(parent=self._win, piece=self._piece, size=self._board._size, with_legend=True)  # Reinitializes board
+        self.loop = True  # Sets loop flag to true
 
     @abc.abstractmethod
     def _run(self) -> None:
-        """Abstract method that needs to be implemented by the subclass
-
-        Raises:
-            NotImplementedError: This method needs to be implemented by the subclass
-        """
+        """Abstract method to be implemented by subclasses."""
         raise NotImplementedError
 
-
     def check_events(self) -> bool:
+        """Checks for Pygame events (key presses or window close)."""
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 raise SystemExit
@@ -135,15 +133,19 @@ class AbstractAlgorithm(abc.ABC):
                         self.check_events()
         return False
 
-
 class BacktrackingAlgorithm(AbstractAlgorithm):
-    
-    def __init__(self, piece: Piece, size: int=8) -> None:
-        self._piece = piece
-        self._size = size
-        self._win = pygame.display.set_mode((size*SQ_SIZE, size*SQ_SIZE))
-        self._board = Board(size=self._size,parent=self._win, piece=self._piece, with_legend=True)
+
+    def __init__(self, piece: Piece, size: int = 8) -> None:
+        self._piece = piece  # Sets the piece for the algorithm
+        self._size = size  # Sets the board size
+        self._win = pygame.display.set_mode((size * SQ_SIZE, size * SQ_SIZE))  # Initializes Pygame display
+        self._board = Board(size=self._size, parent=self._win, piece=self._piece, with_legend=True)  # Initializes board with legend
+        self.path = list()  # Initializes path to store move sequence
         
     def _run(self) -> None:
-        solveKT(n=self._size, bkalg=self)
-        self.loop = False
+        solveKT(n=self._size, bkalg=self)  # Starts the knight's tour algorithm
+        self.loop = False  # Stops loop after solving the problem
+
+    def _reset(self) -> None:
+        self.path = list()  # Clears path
+        super()._reset()  # Calls parent reset method

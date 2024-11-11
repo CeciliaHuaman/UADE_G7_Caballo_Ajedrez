@@ -47,9 +47,9 @@ class GameInput:
         # Diccionario con la configuración de cada campo de entrada (posición, tamaño, texto y etiqueta)
         self.inputs = {
             "size": {"rect": pygame.Rect(260, 70, 80, 32), "text": '', "label": "Tamaño del tablero: "},
-            "x": {"rect": pygame.Rect(260, 120, 80, 32), "text": '', "label": "Posición inicial Fila: "},
-            "y": {"rect": pygame.Rect(260, 170, 80, 32), "text": '', "label": "Posición inicial Columna: "},
-            "opt": {"rect": pygame.Rect(260, 270, 80, 32), "text": '', "label": "Ingrese su opcion: "}
+            "x": {"rect": pygame.Rect(260, 120, 80, 32), "text": '', "label": "Posición inicial - Fila: "},
+            "y": {"rect": pygame.Rect(260, 170, 80, 32), "text": '', "label": "Posición inicial - Columna: "},
+            "opt": {"rect": pygame.Rect(260, 275, 80, 32), "text": '', "label": "Ingrese su opcion: "}
         }
 
     def run(self):
@@ -113,7 +113,7 @@ class GameInput:
             label_surface = FONT.render(input_data["label"], True, BLACK)
             
             # Dibuja la etiqueta en la pantalla
-            self.screen.blit(label_surface, (input_data["rect"].x - 210, input_data["rect"].y + 10 ))
+            self.screen.blit(label_surface, (input_data["rect"].x - 215, input_data["rect"].y + 10 ))
 
             # Dibuja el borde del campo de entrada, azul si está activo, negro si no lo está
             pygame.draw.rect(self.screen, BLUE if self.active_input == key else BLACK, input_data["rect"], 2)
@@ -128,8 +128,8 @@ class GameInput:
     def draw_algorithm_options(self):
         # Render and position the question label
         question_label = FONT.render("¿Qué algoritmo quiere utilizar?", True, BLACK)
-        self.screen.blit(question_label, (50, 210))
+        self.screen.blit(question_label, (50, 215))
         opt1_label = FONT.render("1- Backtracking Básico", True, BLACK)
-        self.screen.blit(opt1_label, (60, 235))
+        self.screen.blit(opt1_label, (60, 240))
         opt2_label = FONT.render("2- Branch & Bound", True, BLACK)
-        self.screen.blit(opt2_label, (60, 255))
+        self.screen.blit(opt2_label, (60, 260))

@@ -180,16 +180,16 @@ se analiza como <strong>(8^N^2)</strong>, donde: <br><br>
 </small>		
 </section>
 				<section>
-					<h3>Branch & Bound</h3>
+					<h3>"Branch & Bound"</h3>
 					<img src="https://c8.alamy.com/comp/2G3D2JM/portrait-of-caspar-von-warnsdorff-caspar-warnsdorff-scholar-told-rudolf-ii-2G3D2JM.jpg" width="130px" height="170px">
 					<small> 
-						Para el problema propuesto, implementamos Branch and Bound con la heurística de Warnsdorff. 
+						Para el problema propuesto, implementamos La heurística de Warnsdorff. 
 						La cual prioriza la posición con menos movimientos hacia las casillas. Si una ruta falla, se utiliza Bactracking 
-						para probar otras opciones hasta encontrar un recorrido completo o declarar que no existe solución. 
+						para probar otras opciones hasta encontrar un recorrido completo o declarar que no existe solución.
 					</small><br>	
 				</section>
 				<section>
-					<h4>Otras Opciones Poda</h4>
+					<h4>Otras Opciones</h4>
 					<div style="background-color: #2E3440; padding: 20px; border-radius: 8px; margin-bottom: 12px;">
 						<ol style="color: #D8DEE9; line-height: 1.8;">
 
@@ -220,7 +220,7 @@ se analiza como <strong>(8^N^2)</strong>, donde: <br><br>
 				</section>
 				<section>
 					<h3>Implementación</h3>
-					<p><strong>Branch & Bound</strong></p>
+					<p><strong>Regla de Warnsdorff</strong></p>
 				</section>
 				<section>
 						<h4>Pseudocódigo</h4>
@@ -263,7 +263,7 @@ Si no tengo mas movimientos imprimo que no hay solución
 					</section>
 				</section>
 				<section>
-					<h4>Algoritmo B&B</h4>
+					<h4>Algoritmo</h4>
 					<div class="code-container"> 
 					<pre class="language-python">
 						<code data-line-numbers="|1-12|14|19-23|24|33-45|41|47-54|52|56-60|59-60|47-54|52-54|41-44|45|24-31|27-31|21-22|28|14-17|62-67|">
@@ -338,7 +338,7 @@ def printSolution(n, board):
 					</div>	
 				</section>
 				<section>
-                    <h3>Costo B&B</h3>
+                    <h3>Costo Warnsdorff</h3>
                     <div style="background-color: #2E3440; padding: 20px; border-radius: 8px; margin-bottom: 8px; font-size: 24px;">
                         <ol style="color: #D8DEE9; line-height: 1.8;">
                         En el peor caso, la complejidad temporal de la regla de Warnsdorff es <strong>𝑂(𝑁^2x8)</strong>, donde <strong>𝑁^2</strong> es el número de casillas del tablero y 8 es el máximo número de movimientos posibles del caballo.

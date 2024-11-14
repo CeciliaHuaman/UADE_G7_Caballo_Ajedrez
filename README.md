@@ -1,4 +1,4 @@
-#uade-g7-caballo-ajedrez
+# uade-g7-caballo-ajedrez
 
 Versión: 0.1.0
 
@@ -8,7 +8,7 @@ Versión: 0.1.0
 - Mathias Del Vecchio
 - Guillermo Cerna
 
-Descripción
+## Descripción
 
 Este proyecto, llamado Chess Backtracking TPO, implementa un recorrido del caballo en un tablero de ajedrez utilizando algoritmos de Backtracking y Branch and Bound en el contexto de un Trabajo Práctico Obligatorio (TPO). La solución permite explorar el comportamiento de estos algoritmos en diferentes configuraciones de tamaño de tablero y posiciones iniciales, y se enfoca en la eficiencia a través de la optimización del recorrido.
 

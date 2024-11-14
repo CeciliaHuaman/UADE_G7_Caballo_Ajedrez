@@ -1,215 +1,116 @@
-from __future__ import annotations
-import pygame
-from random import randint
-import abc
+from __future__ import annotations  # Ensures compatibility with type hints for future versions of Python
+import pygame  # Imports the Pygame library for graphics and event handling
+from pathlib import Path  # Imports Path for handling file paths
+from src.utils.game import SQ_SIZE  # Imports SQ_SIZE constant for square size
 
-BoardPosition = tuple[int, int]
-
-WIN = pygame.display.set_mode((720, 720))
-SQ_SIZE = 90
-
+BoardPosition = tuple[int, int]  # Defines a type alias for a position on the board
 
 class Board:
 
     def __init__(
-        self, parent: pygame.Surface, piece: Piece, with_legend: bool = False
+        self, size, parent: pygame.Surface, piece: Piece, with_legend: bool = False
     ) -> None:
-        self._board = [[0 for _ in range(8)] for _ in range(8)]
-        self._parent = parent
-        self._with_legend = with_legend
-        self.surface
-        self.piece = piece
+        self._size = size  # Sets the board size
+        self._board = [[-1 for _ in range(size)] for _ in range(size)]  # Initializes the board matrix with -1 (unvisited cells)
+        self._parent = parent  # Sets the parent Pygame surface where the board will be drawn
+        self._with_legend = with_legend  # Determines if row and column legends are displayed
+        self.surface  # Accesses the surface property to initialize the board display
+        self.piece = piece  # Sets the piece to be displayed on the board
 
     @property
     def surface(self) -> pygame.Surface:
         """This function creates a chess board with alternating colors
 
         Returns:
-            list[list[tuple[int, int, int]]]: A list of lists representing the chess board
+            pygame.Surface: A Pygame surface representing the chessboard
         """
-        # Create a chess board with alternating colors for
-        surface = pygame.Surface((720, 720))
+        surface = pygame.Surface((self._size * SQ_SIZE, self._size * SQ_SIZE))  # Creates a new Pygame surface for the board
+        font = pygame.font.Font(None, 24)  # Loads a default font for text rendering
+        font_color = (64, 64, 64)  # Sets color for text (legends)
+        
+        # Loops through each cell to create the checkerboard pattern
         for i in range(len(self._board)):
             for j in range(len(self._board)):
-                if (i + j) % 2 == 0:
-                    color = (209, 139, 71)
+                if (i + j) % 2 == 0:  # Alternates color for each cell based on position
+                    color = (209, 139, 71)  # Dark tile color
                 else:
-                    color = (255, 206, 158)
-                if self._board[i][j] == 1:
-                    color = (0, 130, 0)
-                if self._board[i][j] > 1:
-                    color = (130, 0, 0)
-                pygame.draw.rect(
-                    surface=surface,
-                    color=color,
-                    rect=(j * SQ_SIZE, i * SQ_SIZE, SQ_SIZE, SQ_SIZE),
-                )
+                    color = (255, 206, 158)  # Light tile color
+                tile_surface = pygame.Surface((SQ_SIZE, SQ_SIZE), pygame.SRCALPHA)  # Creates a surface for each tile
+                tile_surface.fill(color=color)  # Fills the tile with the selected color
+                
+                if self._board[i][j] >= 0:  # If a move number is recorded in the tile, displays it
+                    color = (0, 130, 0)  # Color for a tile with a recorded move
+                    tile_surface.fill(color=color)  # Fills the tile with the recorded move color
+                    text = font.render(str(self._board[i][j]), True, "white")  # Renders the move number as text
+                    text_rect = text.get_rect(center=(SQ_SIZE // 2, SQ_SIZE // 2))  # Centers the text on the tile
+                    tile_surface.blit(text, text_rect)  # Draws the text on the tile
+                
+                if self._board[i][j] < -1:  # Indicates an error if the board has invalid data
+                    color = (130, 0, 0)  # Color for error indication
+                    tile_surface.fill(color=color)  # Fills the tile with the error color
+                    text = font.render("ERR", True, "white")  # Renders "ERR" as error text
+                    text_rect = text.get_rect(center=(SQ_SIZE // 2, SQ_SIZE // 2))  # Centers the error text
+                    tile_surface.blit(text, text_rect)  # Draws the error text on the tile
 
-        if self._with_legend:
-            font = pygame.font.Font(None, 28)
-            font_color = (64, 64, 64)
-            for i in range(8):
-                text = font.render(text=str(i + 1), antialias=True, color=font_color)
-                text_rect = text.get_rect(center=(20, i * SQ_SIZE + 20))
-                surface.blit(text, text_rect)
+                surface.blit(tile_surface, (j * SQ_SIZE, i * SQ_SIZE))  # Places each tile on the main surface
 
-                text = font.render(text=chr(97 + i), antialias=True, color=font_color)
-                text_rect = text.get_rect(center=(i * SQ_SIZE + 65, 700))
+        if self._with_legend:  # Adds row and column legends if enabled
+            for i in range(self._size):
+                text = font.render(str(i + 1), True, font_color)  # Renders row number
+                text_rect = text.get_rect(center=(20, i * SQ_SIZE + 20))  # Positions row legend on the left
+                surface.blit(text, text_rect)  # Draws row legend on the board surface
+
+                text = font.render(chr(65 + i),True, font_color)
+                text_rect = text.get_rect(center=(i * SQ_SIZE + 65, (self._size*SQ_SIZE)-20))
                 surface.blit(text, text_rect)
         return surface
 
-    def update(self) -> None:
+    def update(self, pos: int) -> None:
         position = self.piece.position
+        self._set_checked(position, pos=pos)
         board = self.surface
-        board.blit(self.piece.surface, (position[0] * SQ_SIZE, position[1] * SQ_SIZE))
-        self._set_checked(position)
+        self.piece.draw(board_surface=board)
         self._parent.blit(board, (0, 0))
-        pygame.display.update()
+        pygame.display.flip()
 
     @property
     def matrix(self) -> list[list[int]]:
         return self._board
 
-    def _set_checked(self, position: BoardPosition) -> None:
-        self._board[position[1]][position[0]] += 1
+    def _set_checked(self, position: BoardPosition, pos: int) -> None:
+        if self._board[position[0]][position[1]] == -1:
+            self._board[position[0]][position[1]] = pos
+        else:
+            self._board[position[0]][position[1]] = -2
 
 
 class Piece:
 
-    def __init__(self, start_pos: BoardPosition = (0, 0)) -> None:
-        self._surface = self._get_surface()
-        self._position = start_pos
+    def __init__(self, image_path: Path, start_pos: BoardPosition = (0, 0)) -> None:
+        self._position = start_pos  # Sets the initial position of the piece
+        self._start_pos = start_pos  # Stores the start position for reset
+        assert image_path.exists()  # Verifies that the image file exists
+        image = pygame.image.load(image_path)  # Loads the image from the specified path
+        self._image = pygame.Surface((SQ_SIZE, SQ_SIZE), pygame.SRCALPHA)  # Creates a Pygame surface for the piece
+        image = pygame.transform.scale(image, (SQ_SIZE * 0.8, SQ_SIZE * 0.8))  # Scales the image to fit the tile
+        self._image.blit(image, image.get_rect(center=(SQ_SIZE // 2, SQ_SIZE // 2)))  # Centers the image on the piece surface
 
-    def _get_surface(self) -> pygame.Surface:
-        """This function loads the knight piece from a png file
-
-        Returns:
-            pygame.Surface: The knight piece as a pygame surface object
-        """
-        piece = pygame.Surface((SQ_SIZE, SQ_SIZE))
-        piece.set_colorkey((0, 0, 0))
-        knight = pygame.image.load("./src/utils/chess_horse.svg")
-        knight = pygame.transform.scale(knight, (SQ_SIZE * 0.8, SQ_SIZE * 0.8))
-        piece.blit(knight, (SQ_SIZE * 0.1, SQ_SIZE * 0.1))
-        return piece
+    def draw(self, board_surface: pygame.Surface):
+        pixel_x = self._position[1] * SQ_SIZE  # Calculates x position in pixels based on column index
+        pixel_y = self._position[0] * SQ_SIZE  # Calculates y position in pixels based on row index
+        board_surface.blit(self._image, (pixel_x, pixel_y))  # Draws the piece on the board surface at calculated position
 
     def move(self, position: BoardPosition) -> None:
-        """This function moves a piece to a given position on the board
+        """Moves the piece to a specified position on the board
 
         Args:
-            position (BoardPosition): The position on the board where the piece needs to be moved to
+            position (BoardPosition): The new position of the piece
         """
-        self._position = position
+        self._position = position  # Updates the piece's position
+
+    def reset_position(self) -> None:
+        self._position = self._start_pos  # Resets the piece to its starting position
 
     @property
     def position(self) -> BoardPosition:
-        return self._position
-
-    @property
-    def surface(self) -> pygame.Surface:
-        return self._surface
-    
-
-pause = False
-
-def check_events() -> bool:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            raise SystemExit
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_r:
-                return True
-            if event.key == pygame.K_p:
-                global pause
-                pause = not pause
-                while pause:
-                    check_events()
-    return False
-
-
-class AbstractAlgorithm(abc.ABC):
-    _board: Board
-    _piece: Piece
-
-    def run(self) -> None:
-        """This function runs the algorithm until the user presses the 'r' key"""
-        while True:
-            self._run()
-            pause = True
-            if check_events():
-                self._reset()
-
-    def _move_piece(self, position: BoardPosition) -> None:
-        """Use this method to move the piece on the board
-
-        Args:
-            position (BoardPosition): The position on the board where the piece needs to be moved to
-        """
-        self._board.piece.move(position)
-        self._board.update()
-        pygame.time.wait(500)
-        
-    def _reset(self) -> None:
-        """Resets the board and the piece to their initial state"""
-        self._board = Board(parent=WIN, piece=self._piece)
-
-    @abc.abstractmethod
-    def _run(self) -> None:
-        """Abstract method that needs to be implemented by the subclass
-
-        Raises:
-            NotImplementedError: This method needs to be implemented by the subclass
-        """
-        raise NotImplementedError
-
-
-class RandomAlgorithm(AbstractAlgorithm):
-
-    def __init__(self, piece: Piece=Piece()) -> None:
-        self._piece = piece
-        self._board = Board(parent=WIN, piece=self._piece)
-
-    def _run(self) -> None:
-        """This method moves the piece to a random position on the board"""
-        while True:
-            position = self._get_random_position()
-            self._move_piece(position)
-            # Only useful for the RandomAlgorithm
-            if check_events():
-                self._reset()
-
-    def _get_random_position(self) -> BoardPosition:
-        """Generates a random position for the piece on the board
-
-        Returns:
-            BoardPosition: A tuple representing the position on the board
-        """
-        position = (randint(0, 7), randint(0, 7))
-        return position
-
-
-class BacktrackingAlgorithm(AbstractAlgorithm):
-    
-    def __init__(self, piece: Piece=Piece()) -> None:
-        self._piece = piece
-        self._board = Board(parent=WIN, piece=self._piece)
-
-    def _run(self) -> None:
-        # Add your code here, call self._move_piece to move the piece
-        position = (0, 0)
-        self._move_piece(position)
-
-
-class Game:
-    def __init__(self, algorithm: AbstractAlgorithm) -> None:
-        self._algorithm = algorithm
-
-    def run(self) -> None:
-        pygame.init()
-        self._algorithm.run()
-        pygame.quit()
-
-
-if __name__ == "__main__":
-    game = Game(algorithm=RandomAlgorithm())
-    game.run()
+        return self._position  # Returns the current position of the piece

@@ -59,7 +59,7 @@
 				<section>
 					<h4>Pseudocódigo</h4>
 					<textarea style="border: 2px solid #333; padding: 20px; background-color: #44475A; color: white; width: 100%; height: 550px; font-size: 16px; font-family: monospace; white-space: pre-wrap; overflow: auto;" readonly >
-generarTablero(n) //genero matriz nxn con -1
+generarTablero(n,pos_x,pos_y) //genero matriz nxn con -1
 					
 	Inicializar movimientos_x=[] //[2, 1, -1, -2, -2, -1, 1, 2]
 	Inicializar movimientos_y=[] //[1, 2, 2, 1, -1, -2, -2, -1]
@@ -71,14 +71,14 @@ generarTablero(n) //genero matriz nxn con -1
 		Muestro el tablero //print
 
 		Si no los recorrió, chequeo el primero movimiento posible de los 8 posibles que 
-		puede hacer un caballero en un escaque posible 
+		puede hacer un caballo en un escaque posible 
 		//new_x = curr_x + move_x[i] new_y = curr_y + move_y[i]
 
 		Pregunto si es factible 
 		//Si x e y se encuentran dentro de los límites del tablero
-		//Y que el caballero no haya pasado por ese escaque
+		//Y que el caballo no haya pasado por ese escaque
 							
-			Si lo es, muevo el caballero a la nueva posición.
+			Si lo es, muevo el caballo a la nueva posición.
 			//board[new_x][new_y] = pos
 
 				Hago recursividad desde el nuevo escaque y chequeo movimientos 
@@ -90,41 +90,58 @@ generarTablero(n) //genero matriz nxn con -1
 			//board[new_x][new_y] = -1
 			//i++
 							
-	Si no tengo mas movimientos imprimo que no hay solución
+		Si no tengo mas movimientos imprimo que no hay solución
 					</textarea>
 				</section>
 				<section>
 					<h4>Algoritmo Backtracking</h4>
-					<code class="language-python" data-line-numbers="1-6|8|13|14-15|17-21|29-30|22-23|13|14-21|26|17-21|27|9"><pre>
-			def solveKT(n: int):
+					<code class="language-python" data-line-numbers="1|3|6-7|10|13|16|21|22-23|25|27-28|31|44|47|32|35|21|22-23|25|27-28|31|39|25|42|17|18|19"><pre>
+			def solveKT(n, pos_x, pos_y):
+						# Inicialización Matriz			
 						board = [[-1 for _ in range(n)] for _ in range(n)]
+						
+						# Movimientos posibles
 						move_x = [2, 1, -1, -2, -2, -1, 1, 2]
 						move_y = [1, 2, 2, 1, -1, -2, -2, -1]
+						
+						# Posicion Inicial
 						board[x_position][y_position] = 0
+
+						# Contador
 						pos = 1
 						
+						# Pregunto si es Solucion
 						if not solveKTUtil(n, board , x_position, y_position, move_x , move_y , pos):
 							print("Solution does not exist")
 						else:
 							printSolution(n, board )         
 					
-			def solveKTUtil(n, board , curr_x: int, curr_y: int, move_x, move_y, pos):
+			def solveKTUtil(n, board , curr_x, curr_y, move_x, move_y, pos):
 						if pos == n**2:
 							return True
 						
 						for i in range(8):
+							# Movimiento posible en X e Y
 							new_x = curr_x + move_x[i]
 							new_y = curr_y + move_y[i]
-									
+							
+							#Pregunto si es válido
 							if isSafe(new_x, new_y, board, n):  
 								board[new_x][new_y] = pos
+
+								#Recursividad con nueva posicion
 								if solveKTUtil(n, board, new_x, new_y, move_x, move_y, pos + 1):
 									return True
-						
+							
+							#Si no es válido, vuelvo a marcar -1
 							board[new_x][new_y] = -1		   
+						
+							#Si no hay solución, retorno False
 						return False
 					
 			def isSafe(x, y, board, size):
+						#X e Y se encuentran dentro de los limites
+						#Esta casilla no fue visitada	
 						return 0 <= x < size and 0 <= y < size and board[x][y] == -1  
 
 				</code></pre>
@@ -139,7 +156,7 @@ La complejidad temporal de este problema utilizando Backtracking normalmente <br
 se analiza como <strong>(8^N^2)</strong>, donde: <br><br>
 <ul>
 	<li>N es el tamaño del tablero de ajedrez. Un tablero de ajedrez N x N tiene N^2 casillas.<br></li>
-	<li>Movimientos máximos por casilla: en cada casilla, el caballero puede realizar como máximo 8 movimientos posibles.<br></li>
+	<li>Movimientos máximos por casilla: en cada casilla, el caballo puede realizar como máximo 8 movimientos posibles.<br></li>
 </ul>
 </div>
 <div>
@@ -192,7 +209,7 @@ se analiza como <strong>(8^N^2)</strong>, donde: <br><br>
 				<section>
 						<h4>B&B Pseudocódigo</h4>
 						<textarea style="border: 2px solid #333; padding: 20px; background-color: #44475A; color: white; width: 100%; height: 550px; font-size: 16px; font-family: monospace; white-space: pre-wrap; overflow: auto;" readonly>
-	generarTablero(n) //genero matriz nxn con -1
+	generarTablero(n,pos_x,pos_y) //genero matriz nxn con -1
 	
 	Inicializar movimientos_x=[] //[2, 1, -1, -2, -2, -1, 1, 2]
 	Inicializar movimientos_y=[] //[1, 2, 2, 1, -1, -2, -2, -1]
@@ -208,7 +225,7 @@ se analiza como <strong>(8^N^2)</strong>, donde: <br><br>
 	
 			Si lo es, los priorizo contando los movimientos posibles hacia las casillas
 			//El de menos movimientos es el mas optimo
-			Muevo el caballero a la posición mas optima.
+			Muevo el caballo a la posición mas optima.
 	
 				Hago recursividad desde el nuevo escaque y chequeo nuevamente
 				los movimientos mas optimos posibles. 
@@ -224,7 +241,7 @@ se analiza como <strong>(8^N^2)</strong>, donde: <br><br>
 					</section>
 				</section>
 				<section>
-					<h4>Codigo B&B</h4>
+					<h4>Código B&B</h4>
 					<pre class="language-python">
 						<code data-line-numbers="|1-12|14|19-23|24|33-45|41|47-54|52|56-60|59-60|47-54|52-54|41-44|45|24-31|27-31|21-22|28|14-17|62-67|">
 def solveKT(n, pos_x, pos_y):
@@ -297,51 +314,19 @@ def printSolution(n, board):
 					</pre>	
 				</section>
 			<section>
-					<h3>Costo B&B</h3>
+					<h4>Costo B&B</h4>
 					<div style="background-color: #2E3440; padding: 20px; border-radius: 8px; margin-bottom: 8px; font-size: 24px;">
 						<ol style="color: #D8DEE9; line-height: 1.8;">
 						En el peor caso, la complejidad temporal de la regla de Warnsdorff es <strong>𝑂(𝑁^2x8)</strong>, donde <strong>𝑁^2</strong> es el número de casillas del tablero y 8 es el máximo número de movimientos posibles del caballo.
 						</ol>
 					</div>
+					<div>
+						<img src="BB_valores.jpg" width=500px>
+					</div>
 				</section>
 				<section>
-					<h3>Comparaciones&B</h3>
+					<h3>Comparaciones</h3>
 				</section>
-				<section>
-					<h3>Cantidad de pasos</h3>
-				</section>
-				<section>
-					<h3>Distintos tamaños de tablero</h3>
-				</section>
-				<section>
-					<h3>B&B vs Backtracking</h3>
-				</section>
-				<section>
-					<h3>Preguntas</h3>
-				</section>
-				<section>
-					<pre class="language-python">
-						<code class="hljs" data-code="python/main.py" data-line-numbers="|1|3-5|6|7-13|14|15-21|">
-						</code>
-					</pre>	
-				</section>
-				<section>
-					<pre><code data-line-numbers="3,8-10">
-						<table>
-						  <tr>
-							<td>Apples</td>
-							<td>$1</td>
-							<td>7</td>
-						  </tr>
-						  <tr>
-							<td>Oranges</td>
-							<td>$2</td>
-							<td>18</td>
-						  </tr>
-						</table>
-						</code></pre>
-				</section>
-				
 			</div>
 		</div>
 

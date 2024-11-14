@@ -49,6 +49,7 @@ def solveKT(n, bkalg: AbstractAlgorithm):
     # Attempts to find a complete tour using the utility function
     if not solveKTUtil(n, board, x_position, y_position, move_x, move_y, pos, bkalg):
         print("Solution does not exist")  # Prints if a tour is not possible
+        raise SystemExit
     else:
         printSolution(n, board)  # Prints the complete tour if successful
 

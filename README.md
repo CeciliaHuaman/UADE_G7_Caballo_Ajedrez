@@ -19,15 +19,17 @@ Poetry: Utilizado para gestionar las dependencias y el entorno virtual del proye
 
 Instalación
 
-### Clonar el repositorio:
+#### Clonar el repositorio:
     git clone https://github.com/tu_usuario/uade-g3-caballo-ajedrez.git
     cd uade-g3-caballo-ajedrez
 
-Instalar dependencias: Este proyecto utiliza Poetry para manejar dependencias. Si no tienes Poetry instalado, puedes instalarlo ejecutando:
+#### Instalar dependencias: Este proyecto utiliza Poetry para manejar dependencias. Si no tienes Poetry instalado, puedes instalarlo ejecutando:
     pip install poetry
-Configurar el entorno: Ejecuta el siguiente comando para instalar las dependencias especificadas en pyproject.toml:
+
+#### Configurar el entorno: Ejecuta el siguiente comando para instalar las dependencias especificadas en pyproject.toml:
     poetry install
-Iniciar el entorno virtual: Activa el entorno virtual de Poetry:
+
+#### Iniciar el entorno virtual: Activa el entorno virtual de Poetry:
     poetry shell
 
 ### Uso

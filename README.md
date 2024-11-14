@@ -1,4 +1,4 @@
-uade-g7-caballo-ajedrez
+#uade-g7-caballo-ajedrez
 
 Versión: 0.1.0
 

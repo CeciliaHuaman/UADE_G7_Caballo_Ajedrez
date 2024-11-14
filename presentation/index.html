@@ -4,7 +4,7 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>reveal.js</title>
+		<title>Recorrido del Caballo de Ajedrez TPO</title>
 
 		<link rel="stylesheet" href="dist/reset.css">
 		<link rel="stylesheet" href="dist/reveal.css">
@@ -27,10 +27,10 @@
 					<p>
 						<img src="chess_horse.svg" alt="horse logo" style="height: 100px; background: transparent;" class="logo">
 					</p>
-					<p><strong>Materia:</strong> Programacion 3</p>
+					<p><strong>Materia:</strong> Programación 3</p>
 					<small>
 						<p>
-							Participantes:
+							Integrantes:
 							<p><a> Del Vecchio, Mathias </a></p>
 							<p><a> Hernandez, Guillermo </a></p>
 							<p><a> Huaman, Cecilia </a></p>
@@ -39,91 +39,318 @@
 					
 				</section>
 				<section>
-					<h3>Problema descripcion</h3>
+					<h4>Descripción</h4>
+					<small>
+						<p>
+							Dado un tablero de ajedrez de tamaño N×N y una posición inicial para el caballo,
+							el objetivo es encontrar un camino en el que el caballo visite cada casilla
+							exactamente una vez. El caballo se mueve en forma de "L", es decir, dos casillas en
+							una dirección (vertical u horizontal) y luego una casilla en una dirección
+							perpendicular, o una casilla en una dirección y dos casillas en la perpendicular.
+						</p>
+						<p><strong>Total de 8 movimientos posibles a evaluar</strong></p>
+						<img src="https://snakify.org/static/images/problems/knight_move.png">
+					</small>
 				</section>
 				<section>
-					<h3>Backtracking</h3>
+					<h3>Implementación</h3>
+					<p><strong>Backtracking</strong></p>
 				</section>
 				<section>
-					<h3>pseudocodigoz</h3>
+					<h4>Pseudocódigo</h4>
+					<textarea style="border: 2px solid #333; padding: 20px; background-color: #44475A; color: white; width: 100%; height: 550px; font-size: 16px; font-family: monospace; white-space: pre-wrap; overflow: auto;" readonly >
+generarTablero(n,pos_x,pos_y) //genero matriz nxn con -1
+					
+	Inicializar movimientos_x=[] //[2, 1, -1, -2, -2, -1, 1, 2]
+	Inicializar movimientos_y=[] //[1, 2, 2, 1, -1, -2, -2, -1]
+	tablero[pos_x][pos_y]=0 //Inicializo posición inicial
+							
+	pos = 1 //primera posicion
+							
+	Si pos recorrió todos los casilleros 
+	Muestro el tablero //print
+
+	Si no los recorrió, chequeo el primer movimiento de los 8 que 
+	puede hacer un caballo en un escaque posible
+	//new_x = curr_x + move_x[i] new_y = curr_y + move_y[i]
+
+	Pregunto si es factible 
+	//Si x e y se encuentran dentro de los límites del tablero
+	//Y que el caballero no haya pasado por ese escaque
+						
+		Si lo es, muevo el caballo a la nueva posición.
+		//board[new_x][new_y] = pos
+
+			Hago recursividad desde el nuevo escaque y chequeo movimientos 
+			posibles a partir de ahí
+			#if(factible(n, board, new_x, new_y, move_x, move_y, pos+1)):
+		
+		Si no lo es, vuelvo un movimiento atrás y pruebo desde el próximo 
+		movimiento posible de los 8 mencionados anteriormente.
+		//board[new_x][new_y] = -1
+		//i++
+						
+	Si no tengo mas movimientos imprimo que no hay solución
+					</textarea>
 				</section>
+
+				<style>
+					.code-container {
+						width: 1000px;
+						font-size: 28px;               /* Tamaño de fuente reducido */
+						background-color: #44475A;     /* Fondo claro para resaltar el código */
+						border-radius: 5px;            /* Esquinas redondeadas */
+					}
+				  </style>
+				  
 				<section>
-					<h3>Codigo back tracking</h3>
-				</section>
-				<section>
-					<h3>Costo</h3>
-				</section>
-				<section>
-					<h3>B&B</h3>
-				</section>
-				<section>
-					<h3>distinttas opciones</h3>
-				</section>
-				<section>
-					<h3>Codigo B&B</h3>
-				</section>
-				<section>
-					<h3>Costo</h3>
-				</section>
-				<section>
-					<h3>Comparaciones&B</h3>
-				</section>
-				<section>
-					<h3>Cantidad de pasos</h3>
-				</section>
-				<section>
-					<h3>Distintos tamaños de tablero</h3>
-				</section>
-				<section>
-					<h3>B&B vs Backtracking</h3>
-				</section>
-				<section>
-					<h3>Preguntas</h3>
-				</section>
-				<section>
-					<pre class="language-python">
-						<code class="hljs" data-code="python/main.py" data-line-numbers="|1|3-5|6|7-13|14|15-21|">
-						</code>
-					</pre>	
-				</section>
-				<section>
-					<pre><code data-line-numbers="3,8-10">
-						<table>
-						  <tr>
-							<td>Apples</td>
-							<td>$1</td>
-							<td>7</td>
-						  </tr>
-						  <tr>
-							<td>Oranges</td>
-							<td>$2</td>
-							<td>18</td>
-						  </tr>
-						</table>
-						</code></pre>
-				</section>
-				<section>
-					<pre><code data-line-numbers="3-5|8-10|13-15">
-						<table>
-						  <tr>
-							<td>Apples</td>
-							<td>$1</td>
-							<td>7</td>
-						  </tr>
-						  <tr>
-							<td>Oranges</td>
-							<td>$2</td>
-							<td>18</td>
-						  </tr>
-						  <tr>
-							<td>Kiwi</td>
-							<td>$3</td>
-							<td>1</td>
-						  </tr>
-						</table>
-						</code></pre>
-				</section>
+					<h4>Algoritmo Backtracking</h4>
+					<div class="code-container"> 
+						<code class="language-python" data-line-numbers="|1|3|6-7|10|13|16|21|22-23|25|27-28|31|44|47|32|35|21|22-23|25|27-28|31|39|25|42|17|18|19|"><pre>
+def solveKT(n, pos_x, pos_y):
+			# Inicialización Matriz			
+			board = [[-1 for _ in range(n)] for _ in range(n)]
+			
+			# Movimientos posibles
+			move_x = [2, 1, -1, -2, -2, -1, 1, 2]
+			move_y = [1, 2, 2, 1, -1, -2, -2, -1]
+			
+			# Posicion Inicial
+			board[x_position][y_position] = 0
+
+			# Contador
+			pos = 1
+			
+			# Pregunto si es Solucion
+			if not solveKTUtil(n, board , x_position, y_position, move_x , move_y , pos):
+				print("Solution does not exist")
+			else:
+				printSolution(n, board )         
+		
+def solveKTUtil(n, board , curr_x, curr_y, move_x, move_y, pos):
+			if pos == n**2:
+				return True
+			
+			for i in range(8):
+				# Movimiento posible en X e Y
+				new_x = curr_x + move_x[i]
+				new_y = curr_y + move_y[i]
 				
+				#Pregunto si es válido
+				if isSafe(new_x, new_y, board, n):  
+					board[new_x][new_y] = pos
+
+					#Recursividad con nueva posicion
+					if solveKTUtil(n, board, new_x, new_y, move_x, move_y, pos + 1):
+						return True
+				
+				#Si no es válido, vuelvo a marcar -1
+				board[new_x][new_y] = -1		   
+			
+				#Si no hay solución, retorno False
+			return False
+		
+def isSafe(x, y, board, size):
+			#X e Y se encuentran dentro de los limites
+			#Esta casilla no fue visitada	
+			return 0 <= x < size and 0 <= y < size and board[x][y] == -1  				  
+
+				</code></pre>
+			</div>
+				</section>
+				<section>
+					<h4>Costo Backtracking</h4>
+					<p style="color: rgb(220, 183, 20); font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;">Exponencial</p>
+					<div style="background-color: #2E3440; padding: 10px; border-radius: 8px; margin-bottom: 13px;">
+					<small >
+						
+La complejidad temporal de este problema utilizando Backtracking normalmente <br>
+se analiza como <strong>(8^N^2)</strong>, donde: <br><br>
+<ul>
+	<li>N es el tamaño del tablero de ajedrez. Un tablero de ajedrez N x N tiene N^2 casillas.<br></li>
+	<li>Movimientos máximos por casilla: en cada casilla, el caballero puede realizar como máximo 8 movimientos posibles.<br></li>
+</ul>
+</div>
+<div>
+
+	<img src="geogebra_valores.png" width="350%">
+</div>
+
+
+</small>		
+</section>
+				<section>
+					<h3>Branch & Bound</h3>
+					<img src="https://c8.alamy.com/comp/2G3D2JM/portrait-of-caspar-von-warnsdorff-caspar-warnsdorff-scholar-told-rudolf-ii-2G3D2JM.jpg" width="130px" height="170px">
+					<small> 
+						Para el problema propuesto, implementamos Branch and Bound con la heurística de Warnsdorff. 
+						La cual prioriza la posición con menos movimientos hacia las casillas. Si una ruta falla, se utiliza Bactracking 
+						para probar otras opciones hasta encontrar un recorrido completo o declarar que no existe solución. 
+					</small><br>	
+				</section>
+				<section>
+					<h4>Otras Opciones Poda</h4>
+					<div style="background-color: #2E3440; padding: 20px; border-radius: 8px; margin-bottom: 12px;">
+						<ol style="color: #D8DEE9; line-height: 1.8;">
+
+							<small>
+								<li>
+									<strong>Poda por Distancia hacia el Centro del Tablero</strong><br>
+									Esta estrategia prioriza los movimientos hacia el centro del tablero. 
+								</li>
+								<li>
+									<strong>Poda por Casillas Visitadas Cercanas</strong><br>
+									Este criterio evita movimientos hacia casillas que se encuentran rodeadas de posiciones ya visitadas. 
+								</li>
+								<li>
+									<strong>Poda por Recursividad Controlada</strong><br>
+									Limitar la profundidad de la recursión en ciertos casos (tableros muy grandes).
+								</li>
+								<li>
+									<strong>Poda de Movimiento Retornable</strong><br>
+									En esta estrategia, se busca que el caballo siempre pueda regresar a áreas más abiertas del tablero sin quedar encerrado.
+								</li>
+								<li>
+									<strong>Poda basada en un Árbol de Decisión Probabilístico</strong><br>
+									Para esto se utiliza un modelo probabilístico para determinar la "viabilidad" de cada movimiento.
+								</li>
+							</small>
+						</ol>
+					</div>
+				</section>
+				<section>
+					<h3>Implementación</h3>
+					<p><strong>Branch & Bound</strong></p>
+				</section>
+				<section>
+						<h4>Pseudocódigo</h4>
+						<textarea style="border: 2px solid #333; padding: 20px; background-color: #44475A; color: white; width: 100%; height: 550px; font-size: 16px; font-family: monospace; white-space: pre-wrap; overflow: auto;" readonly>
+generarTablero(n,pos_x,pos_y) //genero matriz nxn con -1
+  
+Inicializar movimientos_x=[] //[2, 1, -1, -2, -2, -1, 1, 2]
+Inicializar movimientos_y=[] //[1, 2, 2, 1, -1, -2, -2, -1]
+tablero[pos_x][pos_y]=0 //Inicializo posición inicial
+					
+pos = 1 //primera posición
+					
+Si pos recorrió todos los casilleros
+Muestro el tablero //print
+
+Si no los recorrió, chequeo el primer movimiento de los 8 
+que puede hacer un caballo en un escaque.
+
+	Si es factible, lo priorizo contando los movimientos 
+	posibles hacia las casillas subsecuentes
+	Se le asigna un valor de prioridad //Siendo el de menor movimientos el más optimo
+	Realiza este proceso para los siguientes movimientos 
+	posibles restantes mencionado anteriormente
+
+
+	Muevo el caballero a la posición más óptima.
+
+		Hago recursividad desde el nuevo escaque y chequeo nuevamente
+		los movimientos más óptimos posibles.
+		#if(factible(n, board, new_x, new_y, move_x, move_y, pos+1)):
+	
+	Si no lo es, vuelvo un movimiento atrás y pruebo desde el próximo
+	movimiento posible de la cola de prioridad.
+	//board[new_x][new_y] = -1
+	//i++
+					
+Si no tengo mas movimientos imprimo que no hay solución
+						 
+						</textarea>
+					</section>
+				</section>
+				<section>
+					<h4>Algoritmo B&B</h4>
+					<div class="code-container"> 
+					<pre class="language-python">
+						<code data-line-numbers="|1-12|14|19-23|24|33-45|41|47-54|52|56-60|59-60|47-54|52-54|41-44|45|24-31|27-31|21-22|28|14-17|62-67|">
+def solveKT(n, pos_x, pos_y):
+
+	# Inicialización Matriz
+	board = [[-1 for i in range(n)] for j in range(n)]
+
+	# Movimientos posibles 
+	move_x = [2, 1, -1, -2, -2, -1, 1, 2]
+	move_y = [1, 2, 2, 1, -1, -2, -2, -1]
+
+	board[pos_x][pos_y] = 0
+	pos = 1
+
+	if not solveKTUtil(n, board, pos_x, pos_y, move_x, move_y, pos):
+		print("Solution does not exist")
+	else:
+		printSolution(n, board)
+
+def solveKTUtil(n, board, curr_x, curr_y, move_x, move_y, pos):
+
+	if pos == n**2:
+		return True
+
+		next_x, next_y = getNextMove(curr_x, curr_y, board, move_x, move_y)
+		if next_x != -1 and next_y != -1:
+			board[next_x][next_y] = pos
+			if solveKTUtil(n, board, next_x, next_y, move_x, move_y, pos + 1):
+				return True
+			# Backtracking
+			board[next_x][next_y] = -1
+	return False
+
+def getNextMove(x, y, board, move_x, move_y):
+
+	min_degree = 8
+	next_move = (-1, -1)
+	
+	for i in range(8):
+		new_x, new_y = x + move_x[i], y + move_y[i]
+		if isSafe(new_x, new_y, board):
+			degree = countNextMoves(new_x, new_y, board, move_x, move_y)
+			if degree < min_degree:
+				min_degree = degree
+				next_move = (new_x, new_y)
+	return next_move
+
+def countNextMoves(x, y, board, move_x, move_y):
+
+	count = 0
+	for i in range(8):
+		new_x, new_y = x + move_x[i], y + move_y[i]
+		if isSafe(new_x, new_y, board):
+			count += 1
+	return count
+
+def isSafe(x, y, board):
+
+	if 0 <= x < len(board) and 0 <= y < len(board) and board[x][y] == -1:
+		return True
+	return False
+
+def printSolution(n, board):
+
+	for i in range(n):
+		for j in range(n):
+			print(board[i][j], end=' ')
+		print()
+						</code>
+					</pre>
+					</div>	
+				</section>
+				<section>
+                    <h3>Costo B&B</h3>
+                    <div style="background-color: #2E3440; padding: 20px; border-radius: 8px; margin-bottom: 8px; font-size: 24px;">
+                        <ol style="color: #D8DEE9; line-height: 1.8;">
+                        En el peor caso, la complejidad temporal de la regla de Warnsdorff es <strong>𝑂(𝑁^2x8)</strong>, donde <strong>𝑁^2</strong> es el número de casillas del tablero y 8 es el máximo número de movimientos posibles del caballo.
+                        </ol>
+                    </div>
+					<div>
+						<img src="BranchBoundCosto.png" width="40%">
+					</div>
+                </section>
+				<section>
+					<h2><a href="https://colab.research.google.com/drive/15B7YWg8x4wrv6m4RYEoO6aBI5Ugm61xq?usp=sharing">Comparaciones y Metricas</a></h2>
+				</section>
 			</div>
 		</div>
 

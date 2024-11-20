@@ -75,7 +75,7 @@ def solveKTUtil(n: int, board: list[list[int]], curr_x: int, curr_y: int, move_x
 if __name__ == "__main__":
     
     # board size
-    n=10
+    n=5
     # initial position of the Knight
     for i in range(n):
         for j in range(n):

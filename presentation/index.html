@@ -118,7 +118,7 @@ se analiza como <strong>(8^N^2)</strong>, donde: <br><br>
 </div>
 <div>
 
-	<img src="geogebra_valores.png" width="350%">
+	<img src="BactrackingCosto.png" width="350%">
 </div>
 
 
@@ -255,7 +255,7 @@ def isSafe(x, y, board, size):
 					<h4>Algoritmo Branch & Bound</h4>
 					<div class="code-container"> 
 					<pre class="language-python">
-						<code data-line-numbers="|1-12|14|19-23|24|33-45|41|47-54|52|56-60|59-60|47-54|52-54|41-44|45|24-31|27-31|21-22|28|14-17|62-67|">
+						<code data-line-numbers="|1-17|13|19-31|24|33-48|42|50-55|33-48|44-46|48|57-60|48|19-31|26-31|15-17|68-73|">
 def solveKT(n):
 	start_time = time.time()
 	board = [[-1 for i in range(n)]for i in range(n)]
@@ -288,33 +288,33 @@ def solveKTUtil(n, board, curr_x, curr_y, move_x, move_y, pos):
 	return False
 
 def branch(curr_x, curr_y, n, board, move_x, move_y):
-	
-	cola_prioridad = []
+    
+    priority_queue = []
 
-	for i in range(8):
-		new_x = curr_x + move_x[i]
-		new_y = curr_y + move_y[i]
-		if isSafe(new_x, new_y, board, size=len(board)):
-			# Prioriza movimientos más alejados del centro
-			distancia = distanciaHaciaBordes(new_x, new_y, n)
-			cola_prioridad.append((distance, new_x, new_y))
-	
-	# Ordena los movimientos segun su cercania a los Bordes
-	cola_prioridad.sort(reverse=True, key=lambda move: move[0])
-	
-	return bound(cola_prioridad)
+    for i in range(8):
+        new_x = curr_x + move_x[i]
+        new_y = curr_y + move_y[i]
+        if isSafe(new_x, new_y, board, size=len(board)):
+            # Guarda los movimientos con sus distancias mas cercanas del centro
+            distance = distanciaHaciaBordes(new_x, new_y, n)
+            priority_queue.append((distance, new_x, new_y))
+    
+    # Ordena los movimientos priorizando los mas cercanos a los bordes
+    priority_queue.sort(reverse=True, key=lambda move: move[0])
+    
+    return bound(priority_queue)
 
 def distanciaHaciaBordes(x, y, n):
 	center = (n - 1) / 2
-	return math.sqrt((x - center)**2 + (y - center)**2)
+	dx = x - center
+	dy = y - center
+	distance = (dx * dx + dy * dy) ** 0.5
+	return distance
 
-	def bound(branchs):
-	if len(branchs)>=4:
-		if len(branchs) % 2 != 0:
-			branchs=branchs[:(len(branchs)//2)+1]
-		else:
-			branchs=branchs[:len(branchs)//2]
-	return branchs
+def bound(moves):
+if len(moves)>=4:
+	moves=moves[:1]
+return moves
 
 def isSafe(x, y, board):
 

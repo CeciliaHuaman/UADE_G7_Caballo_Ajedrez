@@ -5,9 +5,12 @@ from src.utils.tablero import Board, BoardPosition, Piece, SQ_SIZE
 import math
 import time
 
-def distanceToWalls(x, y, n):
+def distanciaHaciaBordes(x, y, n):
     center = (n - 1) / 2
-    return math.sqrt((x - center)**2 + (y - center)**2)
+    dx = x - center
+    dy = y - center
+    distance = (dx * dx + dy * dy) ** 0.5
+    return distance
 
 def bound(moves):
     if len(moves)>=4:
@@ -23,7 +26,7 @@ def branch(curr_x, curr_y, n, board, move_x, move_y):
         new_y = curr_y + move_y[i]
         if isSafe(new_x, new_y, board, size=len(board)):
             # Prioriza movimientos más alejados del centro
-            distance = distanceToWalls(new_x, new_y, n)
+            distance = distanciaHaciaBordes(new_x, new_y, n)
             priority_queue.append((distance, new_x, new_y))
     
     # Ordena los movimientos de mayor a menor distancia al centro
